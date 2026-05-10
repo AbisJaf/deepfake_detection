@@ -1,0 +1,79 @@
+# ==========================================
+# Python & Environment
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env
+
+# ==========================================
+# Data & Large Files (CRITICAL)
+# ==========================================
+# Ignore all HDF5 databases (like your 98GB train.h5)
+*.h5
+*.hdf5
+
+# Ignore raw video and audio files if you move them into the repo
+*.mp4
+*.avi
+*.wav
+*.flac
+
+# Ignore downloaded pre-trained Hugging Face weights
+*.safetensors
+*.bin
+
+# ==========================================
+# PyTorch & Training Checkpoints
+# ==========================================
+*.pt
+*.pth
+*.ckpt
+checkpoints/
+models/weights/
+
+# ==========================================
+# Experiment Tracking & Logs
+# ==========================================
+# Weights & Biases (Mentioned in your TDD)
+wandb/
+*wandb*
+
+# TensorBoard logs
+runs/
+
+# Standard log files
+*.log
+
+# ==========================================
+# IDEs & OS Files
+# ==========================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
