@@ -21,7 +21,8 @@ from models.detector import MultimodalDeepfakeDetector
 
 DATASET_NAME = "DFDC balanced test split"
 CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_adapted_BEST.pth"
-H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test.h5"
+H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\test.h5"
+# H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test.h5"
 INDEX_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test_idx.npy"
 BATCH_SIZE = 8
 NUM_WORKERS = 4
@@ -113,7 +114,9 @@ def evaluate_model():
 
     dataset = HDF5VideoDataset(H5_TEST_PATH, indices=indices)
     with h5py.File(H5_TEST_PATH, "r") as hf:
-        labels = hf["labels"][dataset.indices]
+        # Load all labels into a numpy array first with [:], then index it
+        all_labels = hf["labels"][:] 
+        labels = all_labels[dataset.indices]
     print(
         f"[System] Test set: {len(dataset)} samples "
         f"({int((labels == 0).sum())} real, {int((labels == 1).sum())} fake)"
