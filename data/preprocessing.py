@@ -9,7 +9,8 @@ from PIL import Image
 from torchvision import transforms
 from facenet_pytorch import MTCNN
 from tqdm import tqdm
-from augemntaion import CompressionAugmenter
+# from augemntaion import CompressionAugmenter
+from data.augemntaion import CompressionAugmenter
 import random
 import subprocess
 import tempfile
