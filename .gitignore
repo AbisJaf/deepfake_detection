@@ -37,6 +37,10 @@ env/
 *.h5
 *.hdf5
 
+# Ignore generated NumPy split/index arrays
+*.npy
+*.npz
+
 # Ignore raw video and audio files if you move them into the repo
 *.mp4
 *.avi

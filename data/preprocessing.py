@@ -278,9 +278,10 @@ if __name__ == "__main__":
     # Example usage for Training Split
     ROOT_DIR = r"D:\fyp\dataset\FakeAVCeleb_v1.2\FakeAVCeleb_v1.2"
     processor = DeepfakeDataProcessor(
-        split_csv=r"D:\fyp\app\deepfake_detection\data\splits\val_split.csv",
+        # split_csv=r"D:\fyp\app\deepfake_detection\data\splits\val_split.csv",
+        split_csv=r"D:\fyp\dataset\4068245\DeepfakeTIMIT\DeepfakeTIMIT",
         root_data_dir=ROOT_DIR,
-        output_h5_path=r"D:\fyp\app\deepfake_detection\data\val.h5",
+        output_h5_path=r"D:\fyp\app\deepfake_detection\data\timit_test.h5",
         is_training=False # Enables the 30% augmentation rule
     )
     processor.run()

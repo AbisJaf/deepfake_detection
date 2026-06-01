@@ -18,7 +18,7 @@ class MultimodalDeepfakeDetector(nn.Module):
             nn.Linear(1024, 256),
             nn.ReLU(),
             nn.Linear(256, 1),
-            nn.Sigmoid() # Squashes the final number between 0.0 (Real) and 1.0 (Fake)
+            # nn.Sigmoid() # Squashes the final number between 0.0 (Real) and 1.0 (Fake)
         )
         
     def forward(self, video_tensor, audio_tensor):
