@@ -85,10 +85,11 @@ def train_model():
     model = MultimodalDeepfakeDetector(embed_dim=512).to(device)
     
     # --- NEW: LOAD EPOCH 5 CHECKPOINT ---
-    print("[System] Loading saved weights from Epoch 5...")
-    model.load_state_dict(torch.load("deepfake_detector_epoch_5.pth"))
+    # print("[System] Loading saved weights from Epoch 5...")
+    # model.load_state_dict(torch.load("deepfake_detector_epoch_5.pth"))
     
-    criterion = DeepfakeCompositeLoss(lambda_weight=0.3, margin=1.0)
+    # We explicitly push the loss function to the device so the pos_weight tensor moves to the GPU
+    criterion = DeepfakeCompositeLoss(lambda_weight=0.3, margin=2.0, pos_weight=0.25).to(device)
     scaler = torch.amp.GradScaler('cuda') 
 
     optimizer = AdamW([
@@ -101,11 +102,11 @@ def train_model():
     scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_epochs=5, total_epochs=total_epochs)
     
     # Fast-forward the scheduler to Epoch 6
-    for _ in range(5):
-        scheduler.step()
+    # for _ in range(5):
+    #     scheduler.step()
 
     # --- NEW: START LOOP AT EPOCH 6 ---
-    for epoch in range(6, total_epochs + 1):
+    for epoch in range(1, total_epochs + 1):
         print(f"\n--- Epoch {epoch}/{total_epochs} [PHASE 2: FULL FINE-TUNING (Unfrozen)] ---")
         
         # Unfreeze all layers for Phase 2
@@ -124,6 +125,14 @@ def train_model():
             visuals = visuals.to(device)
             audios = audios.to(device)
             labels = labels.to(device)
+            
+            # --- NEW: THE SPATIAL BLINDERS HACK ---
+            # Black out the outer 32 pixels on all sides of the 224x224 frame
+            # This forces the ViT to only look at the center 160x160 (the face)
+            # mask = torch.zeros((224, 224), device=device)
+            # mask[32:192, 32:192] = 1.0 
+            # # Apply mask to all frames in the batch: shape (B, 16, 3, 224, 224)
+            # visuals = visuals * mask.view(1, 1, 1, 224, 224)
 
             with torch.amp.autocast('cuda'):
                 probabilities, v_embed, a_embed = model(visuals, audios)

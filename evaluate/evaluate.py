@@ -21,8 +21,9 @@ from models.detector import MultimodalDeepfakeDetector
 
 DATASET_NAME = "DFDC balanced test split"
 CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_adapted_BEST.pth"
-H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\test.h5"
-# H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test.h5"
+# CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_epoch_3.pth"
+# H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\test.h5"
+H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test.h5"
 INDEX_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test_idx.npy"
 BATCH_SIZE = 8
 NUM_WORKERS = 4
@@ -139,16 +140,52 @@ def evaluate_model():
     all_labels = []
     all_scores = []
 
+    # print("\n[System] Beginning inference...")
+    # with torch.no_grad():
+    #     loop = tqdm(dataloader, leave=True)
+    #     for visuals, audios, labels in loop:
+    #         visuals = visuals.to(device)
+    #         audios = audios.to(device)
+    #         # --- NEW: APPLY SPATIAL BLINDERS ---
+    #         # mask = torch.zeros((224, 224), device=device)
+    #         # mask[32:192, 32:192] = 1.0 
+    #         # visuals = visuals * mask.view(1, 1, 1, 224, 224)
+
+    #         logits, _, _ = model(visuals, audios)
+    #         probabilities = torch.sigmoid(logits)
+
+    #         all_scores.extend(probabilities.squeeze().cpu().numpy())
+    #         all_labels.extend(labels.cpu().numpy())
     print("\n[System] Beginning inference...")
     with torch.no_grad():
         loop = tqdm(dataloader, leave=True)
         for visuals, audios, labels in loop:
             visuals = visuals.to(device)
             audios = audios.to(device)
+            # --- THE ABLATION TEST: MUTE THE AUDIO ---
+            # audios = audios * 0.0
+            # 1. Get the raw embeddings (ignoring the broken logits)
+            logits, v_embed, a_embed = model(visuals, audios)
+            
+            # 2. Average the temporal frames into a single vector
+            v_mean = v_embed.mean(dim=1)
+            a_mean = a_embed.mean(dim=1)
+            
+            # 3. L2 Normalize them (Forcing them onto the hypersphere, max distance = 2.0)
+            v_mean = F.normalize(v_mean, p=2, dim=1)
+            a_mean = F.normalize(a_mean, p=2, dim=1)
+            
+            # 4. Calculate the explicit mathematical distance 
+            distances = F.pairwise_distance(v_mean, a_mean, p=2)
+            
+            # 5. Convert distance into an anomaly score (0.0 to 1.0)
+            # A distance of 0 means perfect sync (Real). A distance of 2 means terrible sync (Fake).
+            anomaly_scores = distances / 2.0
+            
+            # 6. Override the standard probabilities with our biometric anomaly scores
+            probabilities = anomaly_scores
 
-            logits, _, _ = model(visuals, audios)
-            probabilities = torch.sigmoid(logits)
-
+            # Append to lists exactly as your script expects
             all_scores.extend(probabilities.squeeze().cpu().numpy())
             all_labels.extend(labels.cpu().numpy())
 
