@@ -1,11 +1,4 @@
 
-
-
----
-
-### `requirements.txt`
-
-```text
 torch>=2.0.0
 torchvision
 torchaudio
@@ -17,5 +10,3 @@ h5py
 scikit-learn>=1.0.0
 tqdm
 numpy
-
-```
