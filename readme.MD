@@ -2,7 +2,7 @@
 
 ### `README.md`
 
-```markdown
+
 # VeriFace: Multimodal Deepfake Detection via Cross-Attention Audio-Visual Fusion
 
 VeriFace is a multimodal Late-Fusion Dual-Encoder deepfake detection system developed to combat modern spatiotemporal generative models (e.g., Diffusion models, GANs). By jointly modelling audio and visual streams, VeriFace detects subtle cross-modal desynchronisations and phoneme-level lip-sync mismatches that survive heavy social media compression.
@@ -81,5 +81,4 @@ To run the final exam evaluation on the unseen DFDC balanced test split using th
 ```bash
 python evaluate/evaluate.py
 
-```
 ```
