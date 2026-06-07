@@ -20,7 +20,8 @@ from models.detector import MultimodalDeepfakeDetector
 
 
 DATASET_NAME = "DFDC balanced test split"
-CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_adapted_BEST.pth"
+# CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_adapted_BEST.pth"
+CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_FINAL_BEST.pth"
 # CHECKPOINT_PATH = r"D:\fyp\app\deepfake_detection\deepfake_detector_epoch_3.pth"
 # H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\test.h5"
 H5_TEST_PATH = r"D:\fyp\app\deepfake_detection\data\dfdc_test.h5"
@@ -140,22 +141,7 @@ def evaluate_model():
     all_labels = []
     all_scores = []
 
-    # print("\n[System] Beginning inference...")
-    # with torch.no_grad():
-    #     loop = tqdm(dataloader, leave=True)
-    #     for visuals, audios, labels in loop:
-    #         visuals = visuals.to(device)
-    #         audios = audios.to(device)
-    #         # --- NEW: APPLY SPATIAL BLINDERS ---
-    #         # mask = torch.zeros((224, 224), device=device)
-    #         # mask[32:192, 32:192] = 1.0 
-    #         # visuals = visuals * mask.view(1, 1, 1, 224, 224)
-
-    #         logits, _, _ = model(visuals, audios)
-    #         probabilities = torch.sigmoid(logits)
-
-    #         all_scores.extend(probabilities.squeeze().cpu().numpy())
-    #         all_labels.extend(labels.cpu().numpy())
+    
     print("\n[System] Beginning inference...")
     with torch.no_grad():
         loop = tqdm(dataloader, leave=True)

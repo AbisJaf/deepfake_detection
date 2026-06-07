@@ -1,28 +1,3 @@
-# import torch
-# import torch.nn as nn
-# import torch.nn.functional as F
-
-# class DeepfakeCompositeLoss(nn.Module):
-#     def __init__(self, lambda_weight=0.3, margin=5.0, pos_weight=0.25):
-#         super(DeepfakeCompositeLoss, self).__init__()
-#         # pos_weight of 0.25 tells the BCE loss that Reals are 4x more important than Fakes
-#         self.bce = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([pos_weight]))
-#         self.lambda_weight = lambda_weight
-#         self.margin = margin
-
-#     def forward(self, probability, labels, v_embed, a_embed):
-#         bce_loss = self.bce(probability.squeeze(), labels.float())
-        
-#         v_mean = v_embed.mean(dim=1)
-#         a_mean = a_embed.mean(dim=1)
-#         distances = F.pairwise_distance(v_mean, a_mean, p=2)
-        
-#         lse_d_fake = labels * torch.clamp(self.margin - distances, min=0.0)
-#         lse_d_real = (1 - labels) * distances
-#         lse_d_loss = (lse_d_fake + lse_d_real).mean()
-        
-#         total_loss = bce_loss + (self.lambda_weight * lse_d_loss)
-#         return total_loss, bce_loss, lse_d_loss
 
 
 import torch

@@ -84,32 +84,6 @@ class VisualPreprocessor:
             return full_face_crops, mouth_crops
         return None, None
 
-# class AudioPreprocessor:
-#     def __init__(self):
-#         self.sr = 16000
-#         self.n_fft = 400
-#         self.hop_length = 160
-#         self.n_mels = 80
-
-#     def process_audio(self, audio_path, duration_sec=None):
-#         # Load raw waveform
-#         y, _ = librosa.load(audio_path, sr=self.sr, duration=duration_sec)
-#         return y
-        
-#     def waveform_to_mel(self, waveform):
-#         # Extract 80-band Mel Spectrogram
-#         mel_spec = librosa.feature.melspectrogram(
-#             y=waveform, sr=self.sr, n_fft=self.n_fft, 
-#             hop_length=self.hop_length, n_mels=self.n_mels
-#         )
-#         mel_db = librosa.power_to_db(mel_spec, ref=np.max)
-        
-#         # Per-utterance mean/variance normalization
-#         mean = np.mean(mel_db)
-#         std = np.std(mel_db)
-#         mel_norm = (mel_db - mean) / (std + 1e-6)
-        
-#         return torch.tensor(mel_norm, dtype=torch.float32)
 
 class AudioPreprocessor:
     def __init__(self):
@@ -170,51 +144,7 @@ class DeepfakeDataProcessor:
         self.aud_prep = AudioPreprocessor()
         self.augmenter = CompressionAugmenter()
 
-    # def run(self):
-    #     with h5py.File(self.output_path, 'w') as hf:
-    #         vis_group = hf.create_group('visual')
-    #         mouth_group = hf.create_group('mouth')
-    #         aud_group = hf.create_group('audio')
-    #         labels_dset = hf.create_dataset('labels', (len(self.manifest),), maxshape=(None,), dtype='i')
-            
-    #         valid_idx = 0
-    #         for index, row in tqdm(self.manifest.iterrows(), total=len(self.manifest)):
-    #             video_path = str(self.root_dir / row['path']) # Assuming column is 'path'
-    #             label = int(row['binary_label'])
-                
-    #             # 1. Visual Stream Extraction & Crop
-    #             raw_frames = self.vis_prep.extract_uniform_frames(video_path)
-    #             if not raw_frames: continue
-    #             face_crops, mouth_crops = self.vis_prep.process_frames(raw_frames)
-    #             if not face_crops: continue
-                
-    #             # 2. Audio Stream Extraction
-    #             try:
-    #                 waveform = self.aud_prep.process_audio(video_path)
-    #             except Exception:
-    #                 continue # Skip if audio extraction fails
-                
-    #             # 3. Compression Augmentation (30% probability during training only)
-    #             if self.is_training and random.random() < 0.30:
-    #                 face_crops = self.augmenter.apply_visual_augmentations(face_crops)
-    #                 mouth_crops = self.augmenter.apply_visual_augmentations(mouth_crops)
-    #                 waveform = self.augmenter.apply_audio_gaussian_noise(waveform)
-                
-    #             # 4. Final Tensor Conversion
-    #             vis_tensors = torch.stack([self.vis_prep.full_face_transform(f) for f in face_crops])
-    #             mouth_tensors = torch.stack([self.vis_prep.mouth_transform(m) for m in mouth_crops])
-    #             aud_tensor = self.aud_prep.waveform_to_mel(waveform)
-                
-    #             # 5. Serialize to HDF5
-    #             vis_group.create_dataset(str(valid_idx), data=vis_tensors.numpy(), compression="lzf")
-    #             mouth_group.create_dataset(str(valid_idx), data=mouth_tensors.numpy(), compression="lzf")
-    #             aud_group.create_dataset(str(valid_idx), data=aud_tensor.numpy(), compression="lzf")
-    #             labels_dset[valid_idx] = label
-                
-    #             valid_idx += 1
-                
-    #         # Resize label dataset to drop failed videos
-    #         labels_dset.resize((valid_idx,))
+    
     def run(self):
         print("\nIndexing all MP4 files in the dataset. This will take a few seconds...")
         path_map = {p.name: p for p in self.root_dir.rglob("*.mp4")}

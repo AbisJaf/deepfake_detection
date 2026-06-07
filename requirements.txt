@@ -1,0 +1,21 @@
+
+
+
+---
+
+### `requirements.txt`
+
+```text
+torch>=2.0.0
+torchvision
+torchaudio
+transformers>=4.0.0
+librosa==0.10.0
+opencv-python>=4.0.0
+facenet-pytorch
+h5py
+scikit-learn>=1.0.0
+tqdm
+numpy
+
+```
